@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+//Proposal for flatlist for main home
 const MediaDATA = [
     {
         id: '1',
@@ -42,6 +43,27 @@ const CompanyComponent = (props) => {
     )
 }
 
+const SearchBar = ({ clicked, searchPhrase, setSearchPhrase, setCLicked }) => {
+    return (
+        <>
+            <TextInput style={styles.searchBar}
+                placeholder="Search"
+                value={searchPhrase}
+                onChangeText={setSearchPhrase}
+                onFocus={() => {
+                    setClicked(true);
+                }} />
+            <Feather
+                name="search"
+                size={20}
+                color="black"
+                style={{ marginLeft: 1, position: 'absolute', right: 35 }}
+            />
+
+        </>
+
+    )
+}
 
 function MainHome({ navigation }) {
     return (
@@ -51,7 +73,7 @@ function MainHome({ navigation }) {
                 <TouchableOpacity style={styles.filterIconBackground}>
                     <MaterialCommunityIcons name="filter-variant" size={24} color="black" />
                 </TouchableOpacity>
-                <TextInput style={styles.searchBar} placeholder="Search" />
+                <SearchBar />
             </View>
 
             <ScrollView>
@@ -62,65 +84,66 @@ function MainHome({ navigation }) {
                             mediaName="Punch NewsPaper" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('PremiumTimes')}>
                         <CompanyComponent
                             mediaLogo={<Image source={require('./assets/premiumtimes_Logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Premium Times" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('VanguardNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/vanguard_ng_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Vanguard Newspaper" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('DailySunNigeria')}>
                         <CompanyComponent mediaLogo={<Image source={require('./assets/the_daily_sun_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Daily Sun" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('ThisDayNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/this_day_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="This Day" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('TribuneNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/Tribune-Online-Homelogo.jpg')} style={[styles.mediaLogoMain,]} />}
                             mediaName="Nigerian Tribune" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('IndependentNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/Nigerian_independent_logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
                             mediaName="Nigerian Independent" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('TheNationNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/thenation_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="The Nation" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('DailyTrustNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/daily_trust_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Daily Trust" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('NANNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/NAN_Nigeria_Logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
                             mediaName="NAN" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('PMNewsNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/pmNews_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="PM News" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('NigerianMonitor')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/Nigerian_monitor_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Nigerian Monitor" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('DailyTimesNigeria')} >
                         <CompanyComponent mediaLogo={<Image source={require('./assets/the_Daily_times_logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
                             mediaName="The Daily Times" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('BusinessDayNigeria')}>
                         <CompanyComponent mediaLogo={<Image source={require('./assets/businessday_logo.png')} style={styles.mediaLogoMain} />}
                             mediaName="Business Day" />
                     </TouchableOpacity>
@@ -133,22 +156,6 @@ function MainHome({ navigation }) {
 }
 
 
-function PremiumTimes(navigation) {
-    return (
-        <WebView
-            style={styles.WebView}
-            source={{ uri: 'https://premiumtimesng.com/' }}
-        />
-    );
-}
-function Vanguard(navigation) {
-    return (
-        <WebView
-            style={styles.WebView}
-            source={{ uri: 'https://www.vanguardngr.com/' }}
-        />
-    );
-}
 
 const Stack = createNativeStackNavigator();
 
@@ -157,12 +164,16 @@ export default function HomeScreen() {
         <Stack.Navigator screenOptions={{ headerShown: false }} >
             <Stack.Screen name="MainHome" component={MainHome} />
             {/* <Stack.Screen name="PunchNigeria" component={PunchNigeria} /> */}
-            <Stack.Screen name="PremiumTimes" component={PremiumTimes} />
-            <Stack.Screen name="Vanguard" component={Vanguard} />
+            {/* <Stack.Screen name="PremiumTimes" component={PremiumTimes} /> */}
+            {/* <Stack.Screen name="Vanguard" component={Vanguard} /> */}
         </Stack.Navigator>
     )
 }
 
+export {
+    MainHome,
+
+};
 
 const styles = StyleSheet.create({
     pageContainer: {
@@ -177,7 +188,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         left: 10,
         padding: 10,
-        color: 'white',
+        color: 'black',
         right: 10,
 
     },

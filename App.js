@@ -3,8 +3,24 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, EvilIcons, Feather, MaterialCommunityIcons, MaterialIcons, FontAwesome5, SimpleLineIcons } from '@expo/vector-icons'
-import HomeScreen from './Home'
-import PunchNigeria from './AllMediaOutLets'
+import HomeScreen, { MainHome } from './Home'
+import PunchNigeria,
+{
+  PremiumTimes,
+  VanguardNigeria,
+  DailySunNigeria,
+  ThisDayNigeria,
+  TribuneNigeria,
+  IndependentNigeria,
+  TheNationNigeria,
+  DailyTrustNigeria,
+  NANNigeria,
+  PMNewsNigeria,
+  NigerianMonitor,
+  DailyTimesNigeria,
+  BusinessDayNigeria
+
+} from './AllMediaOutLets'
 import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -114,7 +130,22 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator >
         <Stack.Screen name="BottomTabsComp" component={BottomTabsComp} options={{ headerShown: false }} />
+        <Stack.Screen name="MainHome" component={MainHome} options={{ headerShown: false }} />
         <Stack.Screen name="PunchNigeria" component={PunchNigeria} options={{ headerTitleAlign: 'center', headerShown: false }} />
+        <Stack.Screen name="PremiumTimes" component={PremiumTimes} options={{ headerShown: false }} />
+        <Stack.Screen name="VanguardNigeria" component={VanguardNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="DailySunNigeria" component={DailySunNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="ThisDayNigeria" component={ThisDayNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="TribuneNigeria" component={TribuneNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="IndependentNigeria" component={IndependentNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="TheNationNigeria" component={TheNationNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="DailyTrustNigeria" component={DailyTrustNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="NANNigeria" component={NANNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="PMNewsNigeria" component={PMNewsNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="NigerianMonitor" component={NigerianMonitor} options={{ headerShown: false }} />
+        <Stack.Screen name="DailyTimesNigeria" component={DailyTimesNigeria} options={{ headerShown: false }} />
+        <Stack.Screen name="BusinessDayNigeria" component={BusinessDayNigeria} options={{ headerShown: false }} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
