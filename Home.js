@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -9,63 +9,69 @@ import {
     TextInput,
     Image,
     FlatList,
+    Button,
+    Keyboard,
     ImageBackground
 } from 'react-native';
-import { Ionicons, EvilIcons, Feather, AntDesign, MaterialCommunityIcons, MaterialIcons, FontAwesome5, SimpleLineIcons } from '@expo/vector-icons'
+import { Ionicons, EvilIcons, Entypo, Feather, AntDesign, MaterialCommunityIcons, MaterialIcons, FontAwesome5, SimpleLineIcons } from '@expo/vector-icons'
 import Constants from 'expo-constants'
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
+import MediaData from './Data'
+//the data to be passed into the flatlist. This is far better than having a loooooong code using Scrollview
 
-//Proposal for flatlist for main home
-const MediaDATA = [
-    {
-        id: '1',
-        src: require('./assets/punch_ng_logo.png')
+
+// definition of the Item, which will be rendered in the FlatList for all Media houses
+
+const Item = ({ mediaLink, mediaLogo, mediaName }) => {
+    const navigation = useNavigation();
+
+    const navigateToWebView = () => {
+        navigation.navigate('NewsMedia', { mediaLink, mediaName })
     }
 
-]
-
-const CompanyComponent = (props) => {
     return (
-        <View style={[styles.CompanyComponent, styles.tabBarShadow]}>
-            <View style={styles.mediaLogoView}>
-                {props.mediaLogo}
-                <Text style={styles.mediaName}>
-                    {props.mediaName}
-                </Text>
+        <TouchableOpacity onPress={navigateToWebView}>
+            <View style={[styles.CompanyComponent, styles.tabBarShadow]}>
+                <View style={styles.mediaLogoView}>
+                    <Image source={mediaLogo} style={styles.mediaLogoMain} />
+                    <Text style={styles.mediaName}>
+                        {mediaName}
+                    </Text>
+                </View>
+                <View style={styles.mediaActionButtonContainer}>
+                    <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+                    <Ionicons name="md-heart-outline" size={24} color="black" />
+                </View>
             </View>
-            <View style={styles.mediaActionButtonContainer}>
-                <MaterialCommunityIcons name="information-outline" size={24} color="black" />
-                <Ionicons name="md-heart-outline" size={24} color="black" />
-            </View>
-        </View>
+
+        </ TouchableOpacity >
     )
 }
 
-const SearchBar = ({ clicked, searchPhrase, setSearchPhrase, setCLicked }) => {
-    return (
-        <>
-            <TextInput style={styles.searchBar}
-                placeholder="Search"
-                value={searchPhrase}
-                onChangeText={setSearchPhrase}
-                onFocus={() => {
-                    setClicked(true);
-                }} />
-            <Feather
-                name="search"
-                size={20}
-                color="black"
-                style={{ marginLeft: 1, position: 'absolute', right: 35 }}
-            />
+// the filter
 
-        </>
+export default function HomeScreen({ navigation }) {
 
-    )
-}
+    const [clicked, setClicked] = useState(false);
+    const [textInputValue, setTextInputValue] = useState('')
 
-function MainHome({ navigation }) {
+    const renderItem = ({ item }) => {
+        //When no search input is entered
+        if (item.mediaName.toLowerCase().includes(textInputValue.toLowerCase())) {
+            return <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+        }
+        if (textInputValue === '') {
+            return (
+                <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+            )
+        }
+    };
+
     return (
         <View style={styles.pageContainer}>
             <StatusBar style='auto' backgroundColor={'#b30000'} />
@@ -73,107 +79,73 @@ function MainHome({ navigation }) {
                 <TouchableOpacity style={styles.filterIconBackground}>
                     <MaterialCommunityIcons name="filter-variant" size={24} color="black" />
                 </TouchableOpacity>
-                <SearchBar />
+                {/*Search component begins */}
+                <>
+                    <TextInput
+                        style={
+                            clicked ? styles.searchBar_clicked : styles.searchBar_unclicked}
+                        placeholder="Search"
+                        value={textInputValue}
+                        onChangeText={(textInputValue) => { setTextInputValue(textInputValue); }}
+                        onFocus={() => {
+                            setClicked(true);
+                        }}
+                        onBlur={() => {
+                            setClicked(false)
+                        }}
+                    />
+                    <Feather
+                        name="search"
+                        size={20}
+                        color="black"
+                        style={clicked ? styles.searchIcon_clicked : styles.searchIcon_unclicked}
+                    />
+
+                    {/* cross Icon, depending on whether the search bar is clicked or not */}
+                    {
+                        clicked && (
+                            <Entypo name="cross" size={20} color="black" style={{ padding: 1, right: 20 }} onPress={() => {
+                                setTextInputValue("")
+                            }} />
+                        )
+                    }
+
+                    {/* cancel button, depending on whether the search bar is clicked or not */}
+                    {
+                        clicked && (
+                            <View>
+                                <TouchableOpacity
+                                    //On pressing the cancel button, the keyboard will close, the clicked stated will chnage to unclicked and the phase typed so far in the search bar will clear
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        setClicked(false);
+                                        setTextInputValue("");
+                                    }}
+                                    style={styles.searchCancelButton}
+                                >
+                                    <Text style={{ fontWeight: 'bold' }}>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    }
+                </>
+                {/*Search component ends */}
             </View>
+            {/* In the flatlist below, key was given the value of '_' so that the numColumns that decides how many column the listed items should be divided into*/}
+            < FlatList
+                key={'_'}
+                data={MediaData}
+                value={textInputValue}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                numColumns={2}
+                contentContainerStyle={styles.flatListStyle}
+            />
 
-            <ScrollView>
-                <View style={styles.companyCompsView}>
-                    <TouchableOpacity onPress={() => navigation.navigate('PunchNigeria')}>
-                        <CompanyComponent
-                            mediaLogo={<Image source={require('./assets/punch_ng_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Punch NewsPaper" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('PremiumTimes')}>
-                        <CompanyComponent
-                            mediaLogo={<Image source={require('./assets/premiumtimes_Logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Premium Times" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('VanguardNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/vanguard_ng_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Vanguard Newspaper" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('DailySunNigeria')}>
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/the_daily_sun_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Daily Sun" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('ThisDayNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/this_day_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="This Day" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('TribuneNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/Tribune-Online-Homelogo.jpg')} style={[styles.mediaLogoMain,]} />}
-                            mediaName="Nigerian Tribune" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('IndependentNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/Nigerian_independent_logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
-                            mediaName="Nigerian Independent" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('TheNationNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/thenation_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="The Nation" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('DailyTrustNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/daily_trust_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Daily Trust" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('NANNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/NAN_Nigeria_Logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
-                            mediaName="NAN" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('PMNewsNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/pmNews_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="PM News" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('NigerianMonitor')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/Nigerian_monitor_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Nigerian Monitor" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('DailyTimesNigeria')} >
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/the_Daily_times_logo.png')} style={[styles.mediaLogoMain, { resizeMode: 'contain' }]} />}
-                            mediaName="The Daily Times" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('BusinessDayNigeria')}>
-                        <CompanyComponent mediaLogo={<Image source={require('./assets/businessday_logo.png')} style={styles.mediaLogoMain} />}
-                            mediaName="Business Day" />
-                    </TouchableOpacity>
-                </View>
-
-            </ScrollView>
-
-        </View>
+        </View >
     )
 }
 
-
-
-const Stack = createNativeStackNavigator();
-
-export default function HomeScreen() {
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }} >
-            <Stack.Screen name="MainHome" component={MainHome} />
-            {/* <Stack.Screen name="PunchNigeria" component={PunchNigeria} /> */}
-            {/* <Stack.Screen name="PremiumTimes" component={PremiumTimes} /> */}
-            {/* <Stack.Screen name="Vanguard" component={Vanguard} /> */}
-        </Stack.Navigator>
-    )
-}
-
-export {
-    MainHome,
-
-};
 
 const styles = StyleSheet.create({
     pageContainer: {
@@ -181,9 +153,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
-    searchBar: {
+    searchBar_clicked: {
         height: 50,
-        width: "70%",
+        width: "65%",
         borderRadius: 25,
         backgroundColor: '#fff',
         left: 10,
@@ -192,6 +164,29 @@ const styles = StyleSheet.create({
         right: 10,
 
     },
+    searchBar_unclicked: {
+        height: 50,
+        width: "70%",
+        borderRadius: 25,
+        backgroundColor: '#ffb3b3',
+        left: 10,
+        padding: 10,
+        color: 'black',
+        right: 10,
+
+    },
+
+    searchIcon_clicked: {
+        marginLeft: 1,
+        display: 'none',
+
+    },
+
+    searchIcon_unclicked: {
+        marginLeft: 1,
+        right: 35,
+    },
+
     searchBarContainer: {
         flexDirection: 'row',
         alignSelf: 'center',
@@ -281,7 +276,156 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly'
+    },
+
+    searchCancelButton: {
+
+    },
+
+    flatListStyle: {
+        alignSelf: 'center',
+        paddingBottom: 150,
+
     }
 
 
 })
+
+
+/* const Stack = createNativeStackNavigator();
+
+export default function HomeScreen() {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }} >
+            <Stack.Screen name="MainHome" component={MainHome} />
+           <Stack.Screen name="PunchNigeria" component={PunchNigeria} />
+ <Stack.Screen name="PremiumTimes" component={PremiumTimes} />
+ <Stack.Screen name="Vanguard" component={Vanguard} />
+ </Stack.Navigator >
+    )
+}
+
+const CompanyComponent = (props) => {
+    return (
+        <View style={[styles.CompanyComponent, styles.tabBarShadow]}>
+            <View style={styles.mediaLogoView}>
+                {props.mediaLogo}
+                <Text style={styles.mediaName}>
+                    {props.mediaName}
+                </Text>
+            </View>
+            <View style={styles.mediaActionButtonContainer}>
+                <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+                <Ionicons name="md-heart-outline" size={24} color="black" />
+            </View>
+        </View>
+    )
+}
+
+// Search component
+
+
+const SearchBar = () => {
+
+    const [clicked, setClicked] = useState(false)
+    const [textInputValue, setTextInputValue] = useState('')
+
+
+    return (
+        <>
+            <TextInput
+                style={
+                    clicked ? styles.searchBar_clicked : styles.searchBar_unclicked}
+                placeholder="Search"
+                value={textInputValue}
+                onChangeText={(textInputValue) => { setTextInputValue(textInputValue); }}
+                onFocus={() => {
+                    setClicked(true);
+                }}
+                onBlur={() => {
+                    setClicked(false)
+                }}
+            />
+            <Feather
+                name="search"
+                size={20}
+                color="black"
+                style={clicked ? styles.searchIcon_clicked : styles.searchIcon_unclicked}
+            />
+
+            //cross Icon, depending on whether the search bar is clicked or not
+{
+    clicked && (
+        <Entypo name="cross" size={20} color="black" style={{ padding: 1, right: 20 }} onPress={() => {
+            setSearchPhrase("")
+        }} />
+    )
+}
+
+// cancel button, depending on whether the search bar is clicked or not
+{
+    clicked && (
+        <View>
+            <TouchableOpacity
+                //On pressing the cancel button, the keyboard will close, the clicked stated will chnage to unclicked and the phase typed so far in the search bar will clear
+                onPress={() => {
+                    Keyboard.dismiss();
+                    setClicked(false);
+                    setSearchPhrase("");
+                }}
+                style={styles.searchCancelButton}
+            >
+                <Text style={{ fontWeight: 'bold' }}>Cancel</Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+        </>
+
+    )
+}
+
+//Former list component
+
+const List = ({ searchPhrase, setClicked, MediaDATA }) => {
+    const navigation = useNavigation();
+    const renderItem = ({ item }) => {
+        //When no search input is entered
+        if (item.mediaName.toLowerCase().includes(textInputValue.toLowerCase())) {
+            return <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+        }
+        if (textInputValue === '') {
+            return (
+                <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+            )
+        }
+    };
+
+    const [textInputValue, setTextInputValue] = useState('')
+
+
+    return (
+
+        <View
+            onStartShouldSetResponder={() => {
+                setClicked(false)
+            }}
+            style={{}}>
+      //  In the flatlist below, key was given the value of '_' so that the numColumns that decides how many column the listed items should be divided into
+< FlatList
+    key={'_'}
+    data={mediaData}
+    value={textInputValue}
+    renderItem={renderItem}
+    keyExtractor={item => item.id}
+    numColumns={2}
+    contentContainerStyle={styles.flatListStyle}
+/>
+        </View >
+
+    )
+}
+
+
+
+ */

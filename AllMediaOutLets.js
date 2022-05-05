@@ -16,11 +16,16 @@ import Constants from 'expo-constants'
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native'
 
+//This is the screen component that displays the webviews. Note that medianName and MediaLink params have been passed from HomeScreen in Home.js. So this is a dynamic component. Depending on what media logo I click from homescreen, I get to see a different webView. MediaLink and MediaName are declared in MediaData for all media objects. Thanks to Twitter.com/VotePurchase and https://www.youtube.com/watch?v=D4dDN4nXSns
 
-//Punch newspaper
+function NewsMedia({ navigation }) {
 
-function PunchNigeria({ navigation }) {
+    const route = useRoute()
+    const { mediaName, mediaLink } = route.params;
+
     //webviewref to help with going back and forth withing the webview
     const webviewRef = React.useRef(null);
 
@@ -31,15 +36,15 @@ function PunchNigeria({ navigation }) {
     }
 
     //Loading indicator in case of slow network
-    // function LoadingIndicatorView() {
-    //     return (
-    //         <ActivityIndicator
-    //             color="#009b88"
-    //             size="large"
-    //             style={styles.ActivityIndicatorStyle}
-    //         />
-    //     );
-    // }
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -47,14 +52,14 @@ function PunchNigeria({ navigation }) {
             <WebView
                 webViewgoback
                 style={styles.WebView}
-                source={{ uri: 'https://punchng.com/' }}
+                source={mediaLink}
                 // renderLoading={LoadingIndicatorView}
                 startInLoadingState={true}
                 ref={webviewRef}
             />
             <View style={styles.lowerNavInWebView} >
                 <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
-                <Text style={{}}>Punch NewsPaper</Text>
+                <Text style={{}}>{mediaName}</Text>
                 <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
 
             </View>
@@ -63,6 +68,144 @@ function PunchNigeria({ navigation }) {
     );
 };
 
+
+const styles = StyleSheet.create({
+    pageContainer: {
+        marginTop: Constants.statusBarHeight,
+        flex: 1,
+        backgroundColor: '#fff'
+    },
+    searchBar: {
+        height: 50,
+        width: "70%",
+        borderRadius: 25,
+        backgroundColor: '#fff',
+        left: 10,
+        padding: 10,
+        color: 'white',
+        right: 10,
+
+    },
+    searchBarContainer: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        backgroundColor: '#b30000',
+        justifyContent: 'center',
+        height: 60,
+        width: "100%"
+    },
+
+    filterIconBackground: {
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        backgroundColor: 'white',
+        alignItems: "center",
+        paddingTop: 15
+    },
+
+    CompanyComponent: {
+        height: 178,
+        width: 165,
+        backgroundColor: '#fff',
+        borderRadius: 27,
+        margin: 10,
+    },
+
+    companyCompsView: {
+        width: 400,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom: 100,
+    },
+
+    tabBarShadow: {
+        shadowColor: 'black',
+        shadowOffset: {
+            width: 0,
+            height: 10,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.5,
+        elevation: 5,
+    },
+
+    mediaLogoView: {
+        marginTop: 30
+
+    },
+
+    mediaLogoMain: {
+        height: 50,
+        width: '80%',
+        alignSelf: 'center',
+        resizeMode: 'center',
+    },
+
+    mediaName: {
+        textAlign: 'center',
+        marginTop: 10,
+    },
+
+    mediaActionButtonContainer: {
+        width: '80%',
+        height: 40,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        alignSelf: 'center',
+        marginTop: 10,
+        flexDirection: 'row',
+        padding: 5,
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+    },
+
+    WebView: {
+        marginTop: Constants.statusBarHeight
+    },
+
+
+    lowerNavInWebView: {
+        height: 60,
+        width: '100%',
+        paddingTop: 10,
+        paddingLeft: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly'
+    }
+
+
+})
+
+export default NewsMedia;
+
+{/*
+export {
+    PremiumTimes,
+    VanguardNigeria,
+    DailySunNigeria,
+    ThisDayNigeria,
+    TribuneNigeria,
+    IndependentNigeria,
+    TheNationNigeria,
+    DailyTrustNigeria,
+    NANNigeria,
+    PMNewsNigeria,
+    NigerianMonitor,
+    DailyTimesNigeria,
+    BusinessDayNigeria,
+    CNN,
+    LeadershipNg,
+    AriseTV,
+    ChannelsTV,
+    BBCInternational,
+}
+*/}
+
+{/*
 //Premiumtimes
 
 function PremiumTimes({ navigation }) {
@@ -345,15 +488,15 @@ function TheNationNigeria({ navigation }) {
     }
 
     //Loading indicator in case of slow network
-    // function LoadingIndicatorView() {
-    //     return (
-    //         <ActivityIndicator
-    //             color="#009b88"
-    //             size="large"
-    //             style={styles.ActivityIndicatorStyle}
-    //         />
-    //     );
-    // }
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -642,6 +785,219 @@ function DailyTrustNigeria({ navigation }) {
     );
 };
 
+function CNN({ navigation }) {
+    //webviewref to help with going back and forth withing the webview
+    const webviewRef = React.useRef(null);
+
+    //webViewgoback: to go the previous web page inside the WebView
+
+    function webViewgoback() {
+        if (webviewRef.current) webviewRef.current.goBack();
+    }
+
+    //Loading indicator in case of slow network
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+
+            <WebView
+                webViewgoback
+                style={styles.WebView}
+                source={{ uri: 'https://cnn.com/' }}
+                // renderLoading={LoadingIndicatorView}
+                startInLoadingState={true}
+                ref={webviewRef}
+            />
+            <View style={styles.lowerNavInWebView} >
+                <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
+                <Text style={{}}>CNN</Text>
+                <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
+
+            </View>
+        </View>
+
+    );
+};
+
+function LeadershipNg({ navigation }) {
+    //webviewref to help with going back and forth withing the webview
+    const webviewRef = React.useRef(null);
+
+    //webViewgoback: to go the previous web page inside the WebView
+
+    function webViewgoback() {
+        if (webviewRef.current) webviewRef.current.goBack();
+    }
+
+    //Loading indicator in case of slow network
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+
+            <WebView
+                webViewgoback
+                style={styles.WebView}
+                source={{ uri: 'https://leadership.ng/' }}
+                // renderLoading={LoadingIndicatorView}
+                startInLoadingState={true}
+                ref={webviewRef}
+            />
+            <View style={styles.lowerNavInWebView} >
+                <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
+                <Text style={{}}>Leadership Ng Online</Text>
+                <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
+
+            </View>
+        </View>
+
+    );
+};
+function AriseTV({ navigation }) {
+    //webviewref to help with going back and forth withing the webview
+    const webviewRef = React.useRef(null);
+
+    //webViewgoback: to go the previous web page inside the WebView
+
+    function webViewgoback() {
+        if (webviewRef.current) webviewRef.current.goBack();
+    }
+
+    //Loading indicator in case of slow network
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+
+            <WebView
+                webViewgoback
+                style={styles.WebView}
+                source={{ uri: 'https://www.arise.tv/' }}
+                // renderLoading={LoadingIndicatorView}
+                startInLoadingState={true}
+                ref={webviewRef}
+            />
+            <View style={styles.lowerNavInWebView} >
+                <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
+                <Text style={{}}>Arise TV</Text>
+                <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
+
+            </View>
+        </View>
+
+    );
+};
+
+function ChannelsTV({ navigation }) {
+    //webviewref to help with going back and forth withing the webview
+    const webviewRef = React.useRef(null);
+
+    //webViewgoback: to go the previous web page inside the WebView
+
+    function webViewgoback() {
+        if (webviewRef.current) webviewRef.current.goBack();
+    }
+
+    //Loading indicator in case of slow network
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+
+            <WebView
+                webViewgoback
+                style={styles.WebView}
+                source={{ uri: 'https://www.channelstv.com/' }}
+                // renderLoading={LoadingIndicatorView}
+                startInLoadingState={true}
+                ref={webviewRef}
+            />
+            <View style={styles.lowerNavInWebView} >
+                <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
+                <Text style={{}}>Channels TV</Text>
+                <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
+
+            </View>
+        </View>
+
+    );
+};
+function BBCInternational({ navigation }) {
+    //webviewref to help with going back and forth withing the webview
+    const webviewRef = React.useRef(null);
+
+    //webViewgoback: to go the previous web page inside the WebView
+
+    function webViewgoback() {
+        if (webviewRef.current) webviewRef.current.goBack();
+    }
+
+    //Loading indicator in case of slow network
+    function LoadingIndicatorView() {
+        return (
+            <ActivityIndicator
+                color="#009b88"
+                size="large"
+                style={styles.ActivityIndicatorStyle}
+            />
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+
+            <WebView
+                webViewgoback
+                style={styles.WebView}
+                source={{ uri: 'https://www.bbc.com/' }}
+                // renderLoading={LoadingIndicatorView}
+                startInLoadingState={true}
+                ref={webviewRef}
+            />
+            <View style={styles.lowerNavInWebView} >
+                <AntDesign name="home" size={24} color="black" onPress={() => navigation.navigate('BottomTabsComp')} />
+                <Text style={{}}>BBC International</Text>
+                <Ionicons name="arrow-back-outline" size={24} color="black" onPress={webViewgoback} />
+
+            </View>
+        </View>
+
+    );
+};
+
 {/*
 
 //Punch news paper
@@ -691,133 +1047,5 @@ function PunchNigeria({ navigation }) {
 
 */}
 
-
-const styles = StyleSheet.create({
-    pageContainer: {
-        marginTop: Constants.statusBarHeight,
-        flex: 1,
-        backgroundColor: '#fff'
-    },
-    searchBar: {
-        height: 50,
-        width: "70%",
-        borderRadius: 25,
-        backgroundColor: '#fff',
-        left: 10,
-        padding: 10,
-        color: 'white',
-        right: 10,
-
-    },
-    searchBarContainer: {
-        flexDirection: 'row',
-        alignSelf: 'center',
-        alignItems: 'center',
-        backgroundColor: '#b30000',
-        justifyContent: 'center',
-        height: 60,
-        width: "100%"
-    },
-
-    filterIconBackground: {
-        height: 50,
-        width: 50,
-        borderRadius: 25,
-        backgroundColor: 'white',
-        alignItems: "center",
-        paddingTop: 15
-    },
-
-    CompanyComponent: {
-        height: 178,
-        width: 165,
-        backgroundColor: '#fff',
-        borderRadius: 27,
-        margin: 10,
-    },
-
-    companyCompsView: {
-        width: 400,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        marginBottom: 100,
-    },
-
-    tabBarShadow: {
-        shadowColor: 'black',
-        shadowOffset: {
-            width: 0,
-            height: 10,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.5,
-        elevation: 5,
-    },
-
-    mediaLogoView: {
-        marginTop: 30
-
-    },
-
-    mediaLogoMain: {
-        height: 50,
-        width: '80%',
-        alignSelf: 'center',
-        resizeMode: 'center',
-    },
-
-    mediaName: {
-        textAlign: 'center',
-        marginTop: 10,
-    },
-
-    mediaActionButtonContainer: {
-        width: '80%',
-        height: 40,
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        alignSelf: 'center',
-        marginTop: 10,
-        flexDirection: 'row',
-        padding: 5,
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-    },
-
-    WebView: {
-        marginTop: Constants.statusBarHeight
-    },
-
-
-    lowerNavInWebView: {
-        height: 60,
-        width: '100%',
-        paddingTop: 10,
-        paddingLeft: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly'
-    }
-
-
-})
-
-export default PunchNigeria;
-export {
-    PremiumTimes,
-    VanguardNigeria,
-    DailySunNigeria,
-    ThisDayNigeria,
-    TribuneNigeria,
-    IndependentNigeria,
-    TheNationNigeria,
-    DailyTrustNigeria,
-    NANNigeria,
-    PMNewsNigeria,
-    NigerianMonitor,
-    DailyTimesNigeria,
-    BusinessDayNigeria,
-}
 
 
