@@ -9,10 +9,12 @@ import {
     TextInput,
     Image,
     FlatList,
+    Alert,
     Button,
     Keyboard,
-    ImageBackground
+    ImageBackground,
 } from 'react-native';
+import Modal from "react-native-modal";
 import { Ionicons, EvilIcons, Entypo, Feather, AntDesign, MaterialCommunityIcons, MaterialIcons, FontAwesome5, SimpleLineIcons } from '@expo/vector-icons'
 import Constants from 'expo-constants'
 import { StatusBar } from 'expo-status-bar';
@@ -22,52 +24,99 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 import MediaData from './Data'
-//the data to be passed into the flatlist. This is far better than having a loooooong code using Scrollview
+import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import { useTheme } from '@react-navigation/native';
 
 
 // definition of the Item, which will be rendered in the FlatList for all Media houses
 
-const Item = ({ mediaLink, mediaLogo, mediaName }) => {
+const Item = ({ mediaLink, mediaLogo, mediaName, mediaAbout, onIconClick }) => {
     const navigation = useNavigation();
+
+    //Toggler initiator
+    const [isModalVisible, setModalVisible] = useState(false);
+    let [heartIconColor, setHeartIconColor] = useState(true);
+
+    const favouriteMedia = () => {
+        setHeartIconColor(!heartIconColor)
+    }
+
+    //Toggle for the info pop up for media
+    const toggleInfoModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
     const navigateToWebView = () => {
         navigation.navigate('NewsMedia', { mediaLink, mediaName })
     }
 
-    return (
-        <TouchableOpacity onPress={navigateToWebView}>
-            <View style={[styles.CompanyComponent, styles.tabBarShadow]}>
-                <View style={styles.mediaLogoView}>
-                    <Image source={mediaLogo} style={styles.mediaLogoMain} />
-                    <Text style={styles.mediaName}>
-                        {mediaName}
-                    </Text>
-                </View>
-                <View style={styles.mediaActionButtonContainer}>
-                    <MaterialCommunityIcons name="information-outline" size={24} color="black" />
-                    <Ionicons name="md-heart-outline" size={24} color="black" />
-                </View>
-            </View>
 
-        </ TouchableOpacity >
+    return (
+        <View>
+            <Modal style={styles.mediaInfoModal}
+                isVisible={isModalVisible}
+                onBackdropPress={toggleInfoModal}
+                onBackButtonPress={toggleInfoModal}>
+                <View style={{ height: '90%' }}>
+                    <Image source={mediaLogo} style={[styles.mediaLogoMain, { top: 10 }]} />
+                    <Text style={{ fontWeight: 'bold', textAlign: 'center', marginBottom: 20 }}>{mediaName}</Text>
+                    <Text style={styles.mediaAboutStyle}>{mediaAbout}</Text>
+                </View>
+                <TouchableOpacity style={styles.closeMediaInforModalStyle} onPress={toggleInfoModal} >
+                    <Text>Close</Text>
+                </TouchableOpacity>
+            </Modal>
+
+            <TouchableOpacity onPress={navigateToWebView}>
+                <View style={[styles.CompanyComponent, styles.tabBarShadow]}>
+                    <View style={styles.mediaLogoView}>
+                        <Image source={mediaLogo} style={styles.mediaLogoMain} />
+                        <Text style={styles.mediaName}>
+                            {mediaName}
+                        </Text>
+                    </View>
+                    <View style={styles.mediaActionButtonContainer}>
+                        <TouchableOpacity onPress={toggleInfoModal} >
+                            <MaterialCommunityIcons name="information-outline" size={24} color="black" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => Alert.alert('Added to favorites')} >
+                            <Ionicons name="md-heart-outline" size={24} color={heartIconColor ? 'black' : 'red'} />
+                        </TouchableOpacity>
+
+                    </View>
+                </View>
+
+            </ TouchableOpacity >
+
+        </View >
     )
 }
 
 // the filter
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, onIconClick }) {
+    const { colors } = useTheme();
 
     const [clicked, setClicked] = useState(false);
-    const [textInputValue, setTextInputValue] = useState('')
+    const [textInputValue, setTextInputValue] = useState('');
+
+    //const [searchBarVisible, setSearchBarVisible] = useState(true);
+
+    //Toggle for the search bar pop up
+
+    /*  const searchBarToggle = () => {
+         setSearchBarVisible(!searchBarVisible)
+     }; */
 
     const renderItem = ({ item }) => {
         //When no search input is entered
         if (item.mediaName.toLowerCase().includes(textInputValue.toLowerCase())) {
-            return <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+            return <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} mediaAbout={item.mediaAbout} onIconClick={onIconClick} />
         }
         if (textInputValue === '') {
             return (
-                <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} />
+                <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} mediaAbout={item.mediaAbout}
+                    onIconClick={onIconClick} />
             )
         }
     };
@@ -120,17 +169,20 @@ export default function HomeScreen({ navigation }) {
                                         Keyboard.dismiss();
                                         setClicked(false);
                                         setTextInputValue("");
+                                        //searchBarToggle;
                                     }}
                                     style={styles.searchCancelButton}
                                 >
-                                    <Text style={{ fontWeight: 'bold' }}>Cancel</Text>
+                                    <Text style={{ fontWeight: 'bold', right: 10, color: 'white' }}>Cancel</Text>
                                 </TouchableOpacity>
                             </View>
                         )
                     }
                 </>
                 {/*Search component ends */}
+
             </View>
+
             {/* In the flatlist below, key was given the value of '_' so that the numColumns that decides how many column the listed items should be divided into*/}
             < FlatList
                 key={'_'}
@@ -151,7 +203,7 @@ const styles = StyleSheet.create({
     pageContainer: {
         marginTop: Constants.statusBarHeight,
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: color.backgroundColor
     },
     searchBar_clicked: {
         height: 50,
@@ -192,18 +244,39 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         alignItems: 'center',
         backgroundColor: '#b30000',
+        justifyContent: 'space-evenly',
+        height: 60,
+        width: "100%",
+
+    },
+    searchBarStyle_Visible: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        backgroundColor: '#b30000',
         justifyContent: 'center',
         height: 60,
-        width: "100%"
+        width: "100%",
+    },
+    searchBarStyle_Hidden: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        backgroundColor: '#b30000',
+        justifyContent: 'center',
+        height: 60,
+        width: "100%",
+        display: 'none'
     },
 
     filterIconBackground: {
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         borderRadius: 25,
         backgroundColor: 'white',
         alignItems: "center",
-        paddingTop: 15
+        justifyContent: 'center',
+
     },
 
     CompanyComponent: {
@@ -213,7 +286,30 @@ const styles = StyleSheet.create({
         borderRadius: 27,
         margin: 10,
     },
-
+    mediaInfoModal: {
+        backgroundColor: 'white',
+        height: '60%',
+        paddingHorizontal: 10,
+        width: '85%',
+        position: 'absolute',
+        top: 70,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'black',
+        zIndex: 5,
+        alignSelf: 'center',
+    },
+    closeMediaInforModalStyle: {
+        bottom: 10,
+        position: 'absolute',
+        alignSelf: 'center',
+        height: 30,
+        width: 100,
+        backgroundColor: 'red',
+        alignItems: 'center',
+        borderRadius: 15,
+        justifyContent: 'center',
+    },
     companyCompsView: {
         width: 400,
         flexDirection: 'row',

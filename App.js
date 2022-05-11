@@ -1,46 +1,21 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+  useTheme,
+} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, EvilIcons, Feather, MaterialCommunityIcons, MaterialIcons, FontAwesome5, SimpleLineIcons } from '@expo/vector-icons'
 import HomeScreen from './Home'
 import NewsMedia from './AllMediaOutLets'
-
-
-/* import NewsMedia,
-{
-  PremiumTimes,
-  VanguardNigeria,
-  DailySunNigeria,
-  ThisDayNigeria,
-  TribuneNigeria,
-  IndependentNigeria,
-  TheNationNigeria,
-  DailyTrustNigeria,
-  NANNigeria,
-  PMNewsNigeria,
-  NigerianMonitor,
-  DailyTimesNigeria,
-  BusinessDayNigeria,
-  CNN,
-  LeadershipNg,
-  AriseTV,
-  ChannelsTV,
-  BBCInternational,
-
-} from './AllMediaOutLets'
- */
-
+import MyProfileScreen from './MyProfileScreen'
 import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FavouritesScreen from './FavouritesScreen'
 
 
-const FavouritesScreen = () => {
-  return (
-    <View>
-    </View>
-  )
-}
 const TrendingScreen = () => {
   return (
     <View>
@@ -53,12 +28,7 @@ const BookmarkssScreen = () => {
     </View>
   )
 }
-const MyProfileScreen = () => {
-  return (
-    <View>
-    </View>
-  )
-}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -136,33 +106,40 @@ const Stack = createNativeStackNavigator();
 
 
 export default function App() {
+
+  const [favData, setFavData] = useState([])
+
+  const [currentTheme, setCurrentTheme] = useState(true)
+
+  const themeToggler = () => {
+    setCurrentTheme(!currentTheme)
+  }
+
+  /*  const onIconClick = (item) => {
+     const isItemInFavData = favData.find(i => i.id === item.id) !== undefined
+     if (isItemInFavData) {
+       removeItem(item)
+     } else {
+       addItem(item)
+     }
+   }
+
+   const addItem = (item) => {
+     setFavData([item, ...favData])
+   }
+
+   const removeItem = (item) => {
+     const favItemsCopy = favData.filter(favItem => favItem.id !== item.id)
+     setFavData(favItemsCopy)
+   }
+  */
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={currentTheme ? DefaultTheme : DarkTheme} >
       <Stack.Navigator >
         <Stack.Screen name="BottomTabsComp" component={BottomTabsComp} options={{ headerShown: false }} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="NewsMedia" component={NewsMedia} options={{ headerShown: false }} />
-        {/* <Stack.Screen name="PunchNigeria" component={PunchNigeria} options={{ headerTitleAlign: 'center', headerShown: false }} />
-        <Stack.Screen name="PremiumTimes" component={PremiumTimes} options={{ headerShown: false }} />
-        <Stack.Screen name="VanguardNigeria" component={VanguardNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="DailySunNigeria" component={DailySunNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="ThisDayNigeria" component={ThisDayNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="TribuneNigeria" component={TribuneNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="IndependentNigeria" component={IndependentNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="TheNationNigeria" component={TheNationNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="DailyTrustNigeria" component={DailyTrustNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="NANNigeria" component={NANNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="PMNewsNigeria" component={PMNewsNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="NigerianMonitor" component={NigerianMonitor} options={{ headerShown: false }} />
-        <Stack.Screen name="DailyTimesNigeria" component={DailyTimesNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="BusinessDayNigeria" component={BusinessDayNigeria} options={{ headerShown: false }} />
-        <Stack.Screen name="CNN" component={CNN} options={{ headerShown: false }} />
-        <Stack.Screen name="LeadershipNg" component={LeadershipNg} options={{ headerShown: false }} />
-        <Stack.Screen name="AriseTV" component={AriseTV} options={{ headerShown: false }} />
-        <Stack.Screen name="ChannelsTV" component={ChannelsTV} options={{ headerShown: false }} />
-        <Stack.Screen name="BBCInternational" component={BBCInternational} options={{ headerShown: false }} />
-*/}
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer >
   );
 }
