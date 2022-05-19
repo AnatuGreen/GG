@@ -26,18 +26,19 @@ import { CommonActions } from '@react-navigation/native';
 import MediaData from './Data'
 import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 import { useTheme } from '@react-navigation/native';
+import Item from './Item'
 
 
 // definition of the Item, which will be rendered in the FlatList for all Media houses
-
-const Item = ({ mediaLink, mediaLogo, mediaName, mediaAbout, onIconClick }) => {
+/*
+const Item = ({ id, name, size, mediaLink, mediaLogo, mediaName, mediaAbout, onIconClick }) => {
     const navigation = useNavigation();
 
     //Toggler initiator
     const [isModalVisible, setModalVisible] = useState(false);
     let [heartIconColor, setHeartIconColor] = useState(true);
 
-    const favouriteMedia = () => {
+    const toggleHeart = () => {
         setHeartIconColor(!heartIconColor)
     }
 
@@ -79,7 +80,15 @@ const Item = ({ mediaLink, mediaLogo, mediaName, mediaAbout, onIconClick }) => {
                         <TouchableOpacity onPress={toggleInfoModal} >
                             <MaterialCommunityIcons name="information-outline" size={24} color="black" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => Alert.alert('Added to favorites')} >
+                        <TouchableOpacity onPress={() => {
+                            toggleHeart();
+                            const item = {
+                                id: id,
+                                name: name,
+                                size: size
+                            }
+                            onIconClick(item)
+                        }} >
                             <Ionicons name="md-heart-outline" size={24} color={heartIconColor ? 'black' : 'red'} />
                         </TouchableOpacity>
 
@@ -91,6 +100,7 @@ const Item = ({ mediaLink, mediaLogo, mediaName, mediaAbout, onIconClick }) => {
         </View >
     )
 }
+ */
 
 // the filter
 

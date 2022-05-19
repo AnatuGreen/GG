@@ -25,6 +25,7 @@ import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 import MediaData from './Data'
 import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import Item from './Item'
 
 
 const MyProfileScreen = () => {

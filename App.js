@@ -14,7 +14,7 @@ import MyProfileScreen from './MyProfileScreen'
 import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import FavouritesScreen from './FavouritesScreen'
-
+import Item from './Item'
 
 const TrendingScreen = () => {
   return (
@@ -109,35 +109,59 @@ export default function App() {
 
   const [favData, setFavData] = useState([])
 
+  //Onclick that calls the favouriting function when a heart icon is clicked on any individual news agency block on the home page
+  const onIconClick = (item) => {
+    const isItemInFavData = favData.find(i => i.id === item.id) !== undefined
+    if (isItemInFavData) {
+      removeItem(item)
+    } else {
+      addItem(item)
+    }
+  }
+
+  const addItem = (item) => {
+    setFavData([item, ...favData])
+  }
+
+  const removeItem = (item) => {
+    const favItemsCopy = favData.filter(favItem => favItem.id !== item.id)
+    setFavData(favItemsCopy)
+  }
+
   const [currentTheme, setCurrentTheme] = useState(true)
 
   const themeToggler = () => {
     setCurrentTheme(!currentTheme)
   }
 
-  /*  const onIconClick = (item) => {
-     const isItemInFavData = favData.find(i => i.id === item.id) !== undefined
-     if (isItemInFavData) {
-       removeItem(item)
-     } else {
-       addItem(item)
-     }
-   }
-
-   const addItem = (item) => {
-     setFavData([item, ...favData])
-   }
-
-   const removeItem = (item) => {
-     const favItemsCopy = favData.filter(favItem => favItem.id !== item.id)
-     setFavData(favItemsCopy)
-   }
-  */
   return (
     <NavigationContainer theme={currentTheme ? DefaultTheme : DarkTheme} >
       <Stack.Navigator >
-        <Stack.Screen name="BottomTabsComp" component={BottomTabsComp} options={{ headerShown: false }} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="BottomTabsComp" options={{ headerShown: false }} >
+          {(prop) => (
+            <BottomTabsComp
+              {...prop}
+              onIconClick={onIconClick}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="HomeScreen" options={{ headerShown: false }} >
+          {(prop) => (
+            <HomeScreen
+              {...prop}
+              onIconClick={onIconClick}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name='FavouritesScreen' options={{ headerShown: false }} >
+          {(prop) => (
+            <FavouritesScreen
+              {...prop}
+              data={favData}
+              onIconClick={onIconClick}
+            />
+          )}
+        </Stack.Screen>
         <Stack.Screen name="NewsMedia" component={NewsMedia} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer >

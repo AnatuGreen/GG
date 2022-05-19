@@ -25,15 +25,27 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 import MediaData from './Data'
 import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import Item from './Item'
 
 
 export default function FavouritesScreen({ navigation, data, onIconClick }) {
 
     const { colors } = useTheme();
 
-    return (
-        <View style={styles.pageContainer}>
 
+    const renderItem = ({ item }) => {
+        return (
+            <Item id={item.id} name={item.name} size={item.size} onIconClick={onIconClick} />
+        )
+    }
+
+    return (
+        <View>
+
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+            />
         </View>
     )
 }
@@ -46,4 +58,14 @@ const styles = StyleSheet.create({
         backgroundColor: color.backgroundColor
     },
 
+
+    navigateAcross: {
+        height: 50,
+        width: 150,
+        borderRadius: 25,
+        backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center'
+    }
 })

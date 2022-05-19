@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/iconnew.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.anatugreen.GistGate"
     },
     "web": {
       "favicon": "./assets/iconnew.png"
