@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
     View,
     Text,
@@ -32,6 +32,12 @@ export default function HomeScreen() {
     const [textInputValue, setTextInputValue] = useState('')
     const navigation = useNavigation();
     const [clicked, setClicked] = useState(false);
+    const [filtered, setFiltered] = useState([])
+
+    useEffect(() => {
+        const result = MediaData.filter((v) => v.mediaLink.uri.includes(textInputValue))
+        setFiltered(result)
+    }, [textInputValue])
 
 
     return (
@@ -99,7 +105,7 @@ export default function HomeScreen() {
             {/* In the flatlist below, key was given the value of '_' so that the numColumns that decides how many column the listed items should be divided into*/}
             < FlatList
                 key={'_'}
-                data={MediaData}
+                data={textInputValue?filtered:MediaData}
                 value={textInputValue}
                 renderItem={({ item }) => {
                     return (
