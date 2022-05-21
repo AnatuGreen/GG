@@ -25,33 +25,16 @@ export default function RenderItem({ item }) {
     const { favoriteList, setFavoriteList } = useContext(FavoritesContext)
 
     //const [textInputValue, setTextInputValue] = useState('')
-    const onFavorite = newsCard => {
-        setFavoriteList([...favoriteList, newsCard]);
-    };
-
-    const onRemoveFavorite = newsCard => {
-        const filteredList = favoriteList.filter(
-            item => item.id !== newsCard.id
-        );
-        setFavoriteList(filteredList);
-    };
-
-    const ifExists = newsCard => {
-        if (favoriteList.filter(item => item.id === newsCard.id).length > 0) {
-            return true;
-        }
-        return false;
-    };
 
     //When no search input is entered
     if (item.mediaName.toLowerCase().includes(textInputValue.toLowerCase())) {
         return (
-            <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} mediaAbout={item.mediaAbout} />
+            <Item item={item} />
         )
     }
     if (textInputValue === '') {
         return (
-            <Item mediaName={item.mediaName} mediaLogo={item.mediaLogo} mediaLink={item.mediaLink} mediaAbout={item.mediaAbout} />
+            <Item item={item} />
         )
     }
 
