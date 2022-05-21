@@ -107,7 +107,12 @@ export default function Item(props) {
                                 ? onRemoveFavorite(item)
                                 : onFavorite(item)
                         }} >
-                            <Ionicons name="md-heart-outline" size={24} color={heartIconColor ? 'black' : 'red'} />
+                            {ifExists(item)?
+                                <Ionicons name="md-heart" size={24} color={'red'} />
+                                :
+                                <Ionicons name="md-heart-outline" size={24} color={'black'} />
+                            }
+                            
                         </TouchableOpacity>
 
                     </View>
