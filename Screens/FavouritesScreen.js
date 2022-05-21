@@ -32,8 +32,19 @@ export default function FavouritesScreen() {
     const { favoriteList } = useContext(FavoritesContext)
 
     return (
-        <View>
-
+        <View style={styles.pageContainer}>
+            < FlatList
+                key={'_'}
+                data={favoriteList}
+                renderItem={({ item }) => {
+                    return (
+                        <RenderItem item={item} />
+                    );
+                }}
+                keyExtractor={item => item.id}
+                numColumns={2}
+                contentContainerStyle={styles.flatListStyle}
+            />
 
         </View>
     )

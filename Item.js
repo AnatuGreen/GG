@@ -31,7 +31,9 @@ import { FavoritesContext } from './Components/Contexts/FavouritesContext';
 
 // definition of the Item, which will be rendered in the FlatList for all Media houses
 
-export default function Item({ id, name, size, mediaLink, mediaLogo, mediaName, mediaAbout, }) {
+export default function Item(props) {
+    const { item } = props
+    const { id, name, size, mediaLink, mediaLogo, mediaName, mediaAbout, } = item
     const navigation = useNavigation();
     const { favoriteList, setFavoriteList } = useContext(FavoritesContext)
 
@@ -51,6 +53,23 @@ export default function Item({ id, name, size, mediaLink, mediaLogo, mediaName, 
     const navigateToWebView = () => {
         navigation.navigate('NewsMedia', { mediaLink, mediaName })
     }
+    const onFavorite = newsCard => {
+        setFavoriteList([...favoriteList, newsCard]);
+    };
+
+    const onRemoveFavorite = newsCard => {
+        const filteredList = favoriteList.filter(
+            item => item.id !== newsCard.id
+        );
+        setFavoriteList(filteredList);
+    };
+
+    const ifExists = newsCard => {
+        if (favoriteList.filter(item => item.id === newsCard.id).length > 0) {
+            return true;
+        }
+        return false;
+    };
 
 
     return (
@@ -83,7 +102,8 @@ export default function Item({ id, name, size, mediaLink, mediaLogo, mediaName, 
                         </TouchableOpacity>
                         {/* <TouchableOpacity onPress={() => Alert.alert('Added to favorites')} > */}
                         <TouchableOpacity onPress={() => {
-                            toggleHeart(); ifExists(item)
+                            toggleHeart();
+                            ifExists(item)
                                 ? onRemoveFavorite(item)
                                 : onFavorite(item)
                         }} >
